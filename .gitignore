@@ -1,5 +1,9 @@
 .idea/
 
+README.Docker.md
+
+.dockerignore
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
