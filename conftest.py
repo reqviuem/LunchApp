@@ -13,13 +13,13 @@ def api_client():
 
 
 @pytest.fixture
-def admin_user(db):
+def admin_user():
     user = User.objects.create_superuser(username='admin', password='admin123')
     return user
 
 
 @pytest.fixture
-def employee_user(db):
+def employee_user():
     user = User.objects.create_user(username='alice', password='test1234')
     employee = Employee.objects.create(user=user, name='Alice')
     return employee
@@ -38,11 +38,11 @@ def auth_client_admin(api_client, admin_user):
 
 
 @pytest.fixture
-def restaurant(db):
+def restaurant():
     return Restaurant.objects.create(name='Pizza Place', opening_hours='10:00-18:00')
 
 
 @pytest.fixture
-def menu(db,restaurant):
+def menu(restaurant):
     today = timezone.now().date()
     return Menu.objects.create(restaurant=restaurant, date=today, title='Pizza Day')
