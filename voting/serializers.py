@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Vote
-from restaurants.serializers import MenuSerializer
+from django.db import IntegrityError
 
 
 class VoteSerializer(serializers.ModelSerializer):
@@ -10,7 +10,10 @@ class VoteSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         employee = self.context['request'].user.employee
-        vote = Vote.objects.create(employee=employee, **validated_data)
+        try:
+            vote = Vote.objects.create(employee=employee, **validated_data)
+        except IntegrityError:
+            raise serializers.ValidationError("You have already voted for this menu.")
         return vote
 
 
