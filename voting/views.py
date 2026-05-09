@@ -1,8 +1,9 @@
 from django.utils import timezone
 from django.db.models import Count
-from rest_framework import generics, views, permissions, response
+from rest_framework import generics, views, permissions, response, status
 from .models import Vote
 from .serializers import VoteSerializer
+
 
 
 class VoteView(generics.CreateAPIView):
@@ -16,7 +17,7 @@ class VoteView(generics.CreateAPIView):
 class TodayResultsView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self):
+    def get(self, request, *args, **kwargs):
         today = timezone.now().date()
         results = (
             Vote.objects
@@ -25,6 +26,13 @@ class TodayResultsView(views.APIView):
             .annotate(votes=Count('id'))
             .order_by('-votes')
         )
+
+        if not results.exists():
+            return response.Response(
+                {'detail': 'No votes have been cast today.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         data = [
             {
                 'menu_id': r['menu__id'],
@@ -34,4 +42,4 @@ class TodayResultsView(views.APIView):
             }
             for r in results
         ]
-        return response.Response(data)
+        return response.Response(data, status=status.HTTP_200_OK)
