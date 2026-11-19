@@ -1,0 +1,20 @@
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+extend-exclude = ["**/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "DJ"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["employees", "restaurants", "voting", "myproject", "tests"]
+
+[tool.mypy]
+python_version = "3.13"
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+check_untyped_defs = true
+warn_unused_ignores = true
+exclude = ["migrations/", "^tests/", "^conftest\\.py$"]
+
+[tool.django-stubs]
+django_settings_module = "myproject.settings"

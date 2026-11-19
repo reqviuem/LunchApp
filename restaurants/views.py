@@ -1,8 +1,9 @@
 from django.db.models import QuerySet
 from django.utils import timezone
 from rest_framework import generics, permissions
-from .models import Restaurant, Menu
-from .serializers import RestaurantSerializer, MenuSerializer
+
+from .models import Menu, Restaurant
+from .serializers import MenuSerializer, RestaurantSerializer
 
 
 class RestaurantListCreateView(generics.ListCreateAPIView):

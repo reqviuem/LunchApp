@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import VoteView, TodayResultsView
+
+from .views import TodayResultsView, VoteView
 
 urlpatterns = [
     path('vote/', VoteView.as_view(), name='vote'),

@@ -1,6 +1,7 @@
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 from rest_framework import serializers
+
 from .models import Vote
 
 
@@ -30,7 +31,7 @@ class VoteSerializer(serializers.ModelSerializer):
                     **validated_data,
                 )
         except IntegrityError:
-            raise serializers.ValidationError('You have already voted today.')
+            raise serializers.ValidationError('You have already voted today.') from None
 
 
 class VoteResultSerializer(serializers.Serializer):

@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
-from .models import Restaurant, Menu, MenuItem
+
+from .models import Menu, MenuItem, Restaurant
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
