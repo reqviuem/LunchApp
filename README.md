@@ -37,17 +37,28 @@ LunchApp is a Django REST Framework-based web application designed to help emplo
    - Migrations are applied and the admin user is created from the `DJANGO_SUPERUSER_*` variables on startup.
    - The application will be available at `http://localhost:8000`.
 
+## API Documentation
+
+Interactive documentation is generated from the code with `drf-spectacular`:
+
+- Swagger UI: `http://localhost:8000/api/docs/` (use **Authorize** and paste an access token)
+- ReDoc: `http://localhost:8000/api/redoc/`
+- OpenAPI schema: `http://localhost:8000/api/schema/`
+
 ## API Endpoints
 
 ### Authentication
 - `POST /api/token/`: Obtain JWT token pair (access and refresh).
 - `POST /api/token/refresh/`: Refresh the access token.
 
+Login and registration are rate limited per IP address (`10/min` for token endpoints, `5/hour` for registration) and return `429` when the limit is exceeded. The limits are configured in `DEFAULT_THROTTLE_RATES` in `myproject/settings.py`.
+
 ### Employees
 - `POST /api/employees/`: Register a new employee.
 
 ### Restaurants & Menus
 - `GET | POST /api/restaurants/`: List all restaurants or create a new one.
+- `GET | PUT | PATCH | DELETE /api/restaurants/<id>/`: Retrieve a restaurant, or (admin only) update or delete it. Deleting a restaurant also deletes its menus and their votes.
 - `POST /api/restaurants/menus/`: Create a new menu for a restaurant.
 - `GET /api/restaurants/menus/today/`: Get all menus available for today.
 
