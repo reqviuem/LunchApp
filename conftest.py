@@ -1,8 +1,16 @@
 import pytest
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from rest_framework.test import APIClient
 
 from tests.factories import EmployeeFactory, MenuFactory, RestaurantFactory
+
+
+@pytest.fixture(autouse=True)
+def clear_cache():
+    cache.clear()
+    yield
+    cache.clear()
 
 
 @pytest.fixture
