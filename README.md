@@ -59,6 +59,8 @@ To run the automated tests using `pytest`:
 docker compose exec web pytest
 ```
 
+A coverage report is printed after every run. Test data is built with `factory_boy` factories in `tests/factories.py`.
+
 ## Project Structure
 
 - `employees/`: Employee registration and management logic.
