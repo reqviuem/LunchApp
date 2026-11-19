@@ -1,6 +1,7 @@
+from django.db import IntegrityError, transaction
+from django.utils import timezone
 from rest_framework import serializers
 from .models import Vote
-from django.db import IntegrityError
 
 
 class VoteSerializer(serializers.ModelSerializer):
@@ -8,13 +9,28 @@ class VoteSerializer(serializers.ModelSerializer):
         model = Vote
         fields = ['id', 'menu']
 
+    def validate_menu(self, menu):
+        if menu.date != timezone.localdate():
+            raise serializers.ValidationError("You can only vote for today's menu.")
+        return menu
+
+    def validate(self, attrs):
+        employee = self.context['request'].user.employee
+        if Vote.objects.filter(employee=employee, date=timezone.localdate()).exists():
+            raise serializers.ValidationError('You have already voted today.')
+        return attrs
+
     def create(self, validated_data):
         employee = self.context['request'].user.employee
         try:
-            vote = Vote.objects.create(employee=employee, **validated_data)
+            with transaction.atomic():
+                return Vote.objects.create(
+                    employee=employee,
+                    date=validated_data['menu'].date,
+                    **validated_data,
+                )
         except IntegrityError:
-            raise serializers.ValidationError("You have already voted for this menu.")
-        return vote
+            raise serializers.ValidationError('You have already voted today.')
 
 
 class VoteResultSerializer(serializers.Serializer):

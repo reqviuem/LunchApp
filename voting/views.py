@@ -1,45 +1,26 @@
+from django.db.models import Count, F
 from django.utils import timezone
-from django.db.models import Count
-from rest_framework import generics, views, permissions, response, status
+from rest_framework import generics, permissions, response, views
+from employees.permissions import IsEmployee
 from .models import Vote
-from .serializers import VoteSerializer
-
+from .serializers import VoteResultSerializer, VoteSerializer
 
 
 class VoteView(generics.CreateAPIView):
     serializer_class = VoteSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_serializer_context(self):
-        return {'request': self.request}
+    permission_classes = [IsEmployee]
 
 
 class TodayResultsView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        today = timezone.now().date()
         results = (
             Vote.objects
-            .filter(menu__date=today)
-            .values('menu__id', 'menu__title', 'menu__restaurant__name')
+            .filter(date=timezone.localdate())
+            .annotate(menu_title=F('menu__title'), restaurant=F('menu__restaurant__name'))
+            .values('menu_id', 'menu_title', 'restaurant')
             .annotate(votes=Count('id'))
-            .order_by('-votes')
+            .order_by('-votes', 'menu_title')
         )
-
-        if not results.exists():
-            return response.Response(
-                {'detail': 'No votes have been cast today.'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        data = [
-            {
-                'menu_id': r['menu__id'],
-                'menu_title': r['menu__title'],
-                'restaurant': r['menu__restaurant__name'],
-                'votes': r['votes'],
-            }
-            for r in results
-        ]
-        return response.Response(data, status=status.HTTP_200_OK)
+        return response.Response(VoteResultSerializer(results, many=True).data)
