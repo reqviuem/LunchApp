@@ -1,0 +1,12 @@
+-r requirements.txt
+
+pytest
+pytest-django
+pytest-cov
+factory-boy
+
+ruff
+mypy
+django-stubs
+djangorestframework-stubs
+pre-commit

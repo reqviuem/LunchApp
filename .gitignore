@@ -2,7 +2,7 @@
 
 README.Docker.md
 
-.dockerignore
+staticfiles/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

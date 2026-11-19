@@ -11,7 +11,9 @@ services:
       retries: 10
 
   web:
-    build: .
+    build:
+      context: .
+      target: dev
     env_file: .env
     command: >
       sh -c "python manage.py migrate &&
