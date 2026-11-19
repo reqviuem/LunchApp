@@ -20,17 +20,18 @@ LunchApp is a Django REST Framework-based web application designed to help emplo
 
 ### Installation & Setup
 
-1. **Build and start the containers**:
+1. **Create your environment file**:
+   ```bash
+   cp .env.example .env
+   ```
+   Then edit `.env` and set your own `DJANGO_SECRET_KEY`, `POSTGRES_PASSWORD` and `DJANGO_SUPERUSER_PASSWORD`.
+
+2. **Build and start the containers**:
    ```bash
    docker compose up --build
    ```
+   - Migrations are applied and the admin user is created from the `DJANGO_SUPERUSER_*` variables on startup.
    - The application will be available at `http://localhost:8000`.
-
-2. **Run Migrations**:
-
-   ```bash
-   docker compose exec web python manage.py migrate
-   ```
 
 ## API Endpoints
 
@@ -47,8 +48,8 @@ LunchApp is a Django REST Framework-based web application designed to help emplo
 - `GET /api/restaurants/menus/today/`: Get all menus available for today.
 
 ### Voting
-- `POST /api/voting/vote/`: Cast a vote for a specific menu.
-- `GET /api/voting/results/today/`: View today's voting results.
+- `POST /api/voting/vote/`: Cast a vote for today's menu. Each employee can vote once per day.
+- `GET /api/voting/results/today/`: View today's voting results (empty list if there are no votes).
 
 ## Running Tests
 
@@ -70,6 +71,4 @@ docker compose exec web pytest
 
 ## Admin Interface
 
-You can access the Django Admin interface at `http://localhost:8000/admin/`
-- Username: admin
-- Password: 12345
+You can access the Django Admin interface at `http://localhost:8000/admin/` using the credentials from `DJANGO_SUPERUSER_USERNAME` and `DJANGO_SUPERUSER_PASSWORD` in your `.env` file.
