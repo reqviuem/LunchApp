@@ -1,5 +1,7 @@
 # LunchApp
 
+[![CI](https://github.com/reqviuem/LunchApp/actions/workflows/ci.yml/badge.svg)](https://github.com/reqviuem/LunchApp/actions/workflows/ci.yml)
+
 LunchApp is a Django REST Framework-based web application designed to help employees choose where to have lunch. It provides an internal API for managing restaurants, menus, and a voting system to decide on the best lunch option for the day.
 
 ## Technologies Used
@@ -8,8 +10,10 @@ LunchApp is a Django REST Framework-based web application designed to help emplo
 - **Django 6.0**
 - **Django REST Framework**
 - **PostgreSQL 16**
-- **Docker & Docker Compose**
-- **Pytest**
+- **Docker & Docker Compose** (multi-stage image, Gunicorn and WhiteNoise in production)
+- **Pytest**, **factory_boy**, **pytest-cov**
+- **Ruff**, **mypy** and **pre-commit**
+- **GitHub Actions** for CI
 
 ## Getting Started
 
@@ -60,6 +64,30 @@ docker compose exec web pytest
 ```
 
 A coverage report is printed after every run. Test data is built with `factory_boy` factories in `tests/factories.py`.
+
+## Code Quality
+
+Linting and type checking run in CI and can be run locally inside the container:
+
+```bash
+docker compose exec web ruff check .
+docker compose exec web mypy .
+```
+
+To run the checks automatically before every commit:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+## Production Image
+
+The `Dockerfile` has a `dev` stage (used by `compose.yaml`, includes test and lint tools) and a `production` stage (Gunicorn, static files collected, non-root user):
+
+```bash
+docker build --target production -t lunchapp .
+```
 
 ## Project Structure
 
