@@ -1,3 +1,5 @@
+from datetime import time
+
 import pytest
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -39,10 +41,9 @@ def auth_client_admin(api_client, admin_user):
 
 @pytest.fixture
 def restaurant():
-    return Restaurant.objects.create(name='Pizza Place', opening_hours='10:00-18:00')
+    return Restaurant.objects.create(name='Pizza Place', opening_time=time(10, 0), closing_time=time(18, 0))
 
 
 @pytest.fixture
 def menu(restaurant):
-    today = timezone.now().date()
-    return Menu.objects.create(restaurant=restaurant, date=today, title='Pizza Day')
+    return Menu.objects.create(restaurant=restaurant, date=timezone.localdate(), title='Pizza Day')
