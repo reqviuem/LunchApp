@@ -12,6 +12,9 @@ class Vote(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['employee', 'date'], name='unique_vote_per_employee_per_day')
         ]
+        indexes = [
+            models.Index(fields=['date'], name='vote_date_idx')
+        ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.employee.name} voted for {self.menu}"
