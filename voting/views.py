@@ -1,6 +1,8 @@
 from django.db.models import Count, F
 from django.utils import timezone
-from rest_framework import generics, permissions, response, views
+from rest_framework import generics, permissions, views
+from rest_framework.request import Request
+from rest_framework.response import Response
 from employees.permissions import IsEmployee
 from .models import Vote
 from .serializers import VoteResultSerializer, VoteSerializer
@@ -14,7 +16,7 @@ class VoteView(generics.CreateAPIView):
 class TodayResultsView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: Request, *args, **kwargs) -> Response:
         results = (
             Vote.objects
             .filter(date=timezone.localdate())
@@ -23,4 +25,4 @@ class TodayResultsView(views.APIView):
             .annotate(votes=Count('id'))
             .order_by('-votes', 'menu_title')
         )
-        return response.Response(VoteResultSerializer(results, many=True).data)
+        return Response(VoteResultSerializer(results, many=True).data)
