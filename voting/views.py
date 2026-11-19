@@ -1,5 +1,6 @@
 from django.db.models import Count, F
 from django.utils import timezone
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, permissions, views
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -18,6 +19,7 @@ class VoteView(generics.CreateAPIView):
 class TodayResultsView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(responses=VoteResultSerializer(many=True))
     def get(self, request: Request, *args, **kwargs) -> Response:
         results = (
             Vote.objects

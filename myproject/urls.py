@@ -16,13 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from .throttles import LoginRateThrottle
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('api/token/', TokenObtainPairView.as_view(), name='token-obtain'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
+    path('api/token/', TokenObtainPairView.as_view(throttle_classes=[LoginRateThrottle]), name='token-obtain'),
+    path('api/token/refresh/', TokenRefreshView.as_view(throttle_classes=[LoginRateThrottle]), name='token-refresh'),
 
     path('api/employees/', include('employees.urls')),
     path('api/restaurants/', include('restaurants.urls')),
